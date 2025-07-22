@@ -160,10 +160,10 @@ func XorUint128(ptr *Uint128, op [2]uint64) [2]uint64 {
 }
 
 func addr(ptr *Uint128) *[2]uint64 {
-	if (uintptr)((unsafe.Pointer)(&ptr.d[0]))%16 == 0 {
-		return (*[2]uint64)((unsafe.Pointer)(&ptr.d[0]))
-	}
-	return (*[2]uint64)((unsafe.Pointer)(&ptr.d[1]))
+	// ptr.d is guaranteed to be 8-bytes-aligned, but cmpxchg16b requires 16-bytes alignment.
+	// This selects either &ptr.d[0] or &ptr.d[1] without branches (shift+and+add).
+	off := (uintptr)((unsafe.Pointer)(&ptr.d))/8
+	return (*[2]uint64)((unsafe.Pointer)(&ptr.d[off&1]))
 }
 
 func load(ptr *Uint128) [2]uint64 {
