@@ -11,7 +11,8 @@ import (
 )
 
 var (
-	useNativeAmd64 bool
+	useNativeAmd64   bool
+	useNativeRiscv64 bool
 )
 
 // Uint128 is an opaque container for an atomic uint128.
@@ -35,6 +36,9 @@ func CompareAndSwapUint128(ptr *Uint128, old, new [2]uint64) bool {
 	if runtime.GOARCH == "amd64" && useNativeAmd64 {
 		return compareAndSwapUint128amd64(addr(ptr), old, new)
 	}
+	if runtime.GOARCH == "riscv64" && useNativeRiscv64 {
+		return compareAndSwapUint128riscv64(addr(ptr), old, new)
+	}
 
 	ptr.m.Lock()
 	v := load(ptr)
@@ -53,6 +57,9 @@ func LoadUint128(ptr *Uint128) [2]uint64 {
 	if runtime.GOARCH == "amd64" && useNativeAmd64 {
 		return loadUint128amd64(addr(ptr))
 	}
+	if runtime.GOARCH == "riscv64" && useNativeRiscv64 {
+		return loadUint128riscv64(addr(ptr))
+	}
 
 	ptr.m.Lock()
 	v := load(ptr)
@@ -65,6 +72,10 @@ func LoadUint128(ptr *Uint128) [2]uint64 {
 func StoreUint128(ptr *Uint128, new [2]uint64) {
 	if runtime.GOARCH == "amd64" && useNativeAmd64 {
 		storeUint128amd64(addr(ptr), new)
+		return
+	}
+	if runtime.GOARCH == "riscv64" && useNativeRiscv64 {
+		storeUint128riscv64(addr(ptr), new)
 		return
 	}
 
@@ -80,6 +91,9 @@ func SwapUint128(ptr *Uint128, new [2]uint64) [2]uint64 {
 	if runtime.GOARCH == "amd64" && useNativeAmd64 {
 		return swapUint128amd64(addr(ptr), new)
 	}
+	if runtime.GOARCH == "riscv64" && useNativeRiscv64 {
+		return swapUint128riscv64(addr(ptr), new)
+	}
 
 	ptr.m.Lock()
 	old := load(ptr)
@@ -94,6 +108,9 @@ func SwapUint128(ptr *Uint128, new [2]uint64) [2]uint64 {
 func AddUint128(ptr *Uint128, incr [2]uint64) [2]uint64 {
 	if runtime.GOARCH == "amd64" && useNativeAmd64 {
 		return addUint128amd64(addr(ptr), incr)
+	}
+	if runtime.GOARCH == "riscv64" && useNativeRiscv64 {
+		return addUint128riscv64(addr(ptr), incr)
 	}
 
 	ptr.m.Lock()
@@ -115,6 +132,9 @@ func AndUint128(ptr *Uint128, op [2]uint64) [2]uint64 {
 	if runtime.GOARCH == "amd64" && useNativeAmd64 {
 		return andUint128amd64(addr(ptr), op)
 	}
+	if runtime.GOARCH == "riscv64" && useNativeRiscv64 {
+		return andUint128riscv64(addr(ptr), op)
+	}
 
 	ptr.m.Lock()
 	v := load(ptr)
@@ -132,6 +152,9 @@ func OrUint128(ptr *Uint128, op [2]uint64) [2]uint64 {
 	if runtime.GOARCH == "amd64" && useNativeAmd64 {
 		return orUint128amd64(addr(ptr), op)
 	}
+	if runtime.GOARCH == "riscv64" && useNativeRiscv64 {
+		return orUint128riscv64(addr(ptr), op)
+	}
 
 	ptr.m.Lock()
 	v := load(ptr)
@@ -148,6 +171,9 @@ func OrUint128(ptr *Uint128, op [2]uint64) [2]uint64 {
 func XorUint128(ptr *Uint128, op [2]uint64) [2]uint64 {
 	if runtime.GOARCH == "amd64" && useNativeAmd64 {
 		return xorUint128amd64(addr(ptr), op)
+	}
+	if runtime.GOARCH == "riscv64" && useNativeRiscv64 {
+		return xorUint128riscv64(addr(ptr), op)
 	}
 
 	ptr.m.Lock()
