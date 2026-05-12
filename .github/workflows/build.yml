@@ -27,11 +27,29 @@ jobs:
     - name: Build (arm64)
       run: GOARCH=arm64 go build -v ./...
 
+    - name: Build (arm64_casp)
+      run: GOARCH=arm64 go build -v -tags arm64_casp ./...
+
     - name: Build (arm)
       run: GOARCH=arm go build -v ./...
-  
+
+    - name: Build (riscv64)
+      run: GOARCH=riscv64 go build -v ./...
+
     - name: Test
       run: go test -v -race -coverprofile=coverage.txt -covermode=atomic ./...
+
+    - name: Install qemu-user-static
+      run: sudo apt-get update && sudo apt-get install -y qemu-user-static
+
+    - name: Test (arm64)
+      run: GOARCH=arm64 go test -v -exec qemu-aarch64-static ./...
+
+    - name: Test (arm64_casp)
+      run: GOARCH=arm64 go test -v -tags arm64_casp -exec qemu-aarch64-static ./...
+
+    - name: Test (riscv64)
+      run: GOARCH=riscv64 go test -v -exec qemu-riscv64-static ./...
 
     - name: Codecov
       uses: codecov/codecov-action@v1.1.1

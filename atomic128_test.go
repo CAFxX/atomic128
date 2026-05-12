@@ -279,13 +279,13 @@ func runBenchmarks(b *testing.B, fn func(*testing.PB)) {
 }
 
 func hasNative() bool {
-	return useNativeAmd64
+	return useNative
 }
 
 func fallback(tb testing.TB) {
-	amd64 := useNativeAmd64
-	useNativeAmd64 = false
+	amd64 := useNative
+	useNative = false
 	tb.Cleanup(func() {
-		useNativeAmd64 = amd64
+		useNative = amd64
 	})
 }
