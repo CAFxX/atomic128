@@ -17,10 +17,6 @@ func xorUint128amd64(ptr *Uint128, incr [2]uint64) [2]uint64
 func loadUint128amd64avx(*Uint128) [2]uint64
 func storeUint128amd64avx(*Uint128, [2]uint64)
 
-var hasNativeAmd64, hasAVXAmd64 bool
-
 func init() {
-	hasNativeAmd64 = cpuid.CPU.Supports(cpuid.CX16)
-	hasAVXAmd64 = cpuid.CPU.Supports(cpuid.AVX)
-	initDispatch(hasNativeAmd64, hasAVXAmd64)
+	initDispatch(cpuid.CPU.Supports(cpuid.CX16), cpuid.CPU.Supports(cpuid.AVX))
 }

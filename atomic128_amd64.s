@@ -12,9 +12,8 @@
 
 TEXT ·swapUint128amd64(SB),NOSPLIT,$0
 	MOVQ addr+0(FP), BP
-	MOVQ BP, AX
-	ANDQ $15, AX
-	ADDQ AX, BP
+	ADDQ $15, BP
+	ANDQ $-16, BP
     MOVQ 0(BP), AX
     MOVQ 8(BP), DX
 	MOVQ new+8(FP), BX
@@ -32,9 +31,8 @@ done:
 
 TEXT ·compareAndSwapUint128amd64(SB),NOSPLIT,$0
 	MOVQ addr+0(FP), BP
-	MOVQ BP, AX
-	ANDQ $15, AX
-	ADDQ AX, BP
+	ADDQ $15, BP
+	ANDQ $-16, BP
 	MOVQ old+8(FP), AX
 	MOVQ old+16(FP), DX
 	MOVQ new+24(FP), BX
@@ -46,9 +44,8 @@ TEXT ·compareAndSwapUint128amd64(SB),NOSPLIT,$0
 
 TEXT ·loadUint128amd64(SB),NOSPLIT,$0
 	MOVQ addr+0(FP), BP
-	MOVQ BP, AX
-	ANDQ $15, AX
-	ADDQ AX, BP
+	ADDQ $15, BP
+	ANDQ $-16, BP
 	XORQ AX, AX
 	XORQ DX, DX
 	XORQ BX, BX
@@ -61,18 +58,16 @@ TEXT ·loadUint128amd64(SB),NOSPLIT,$0
 
 TEXT ·loadUint128amd64avx(SB),NOSPLIT,$0
 	MOVQ addr+0(FP), BP
-	MOVQ BP, AX
-	ANDQ $15, AX
-	ADDQ AX, BP
+	ADDQ $15, BP
+	ANDQ $-16, BP
     MOVOA (BP), X1
 	MOVOU X1, val+8(FP)
 	RET
 
 TEXT ·storeUint128amd64(SB),NOSPLIT,$0
 	MOVQ addr+0(FP), BP
-	MOVQ BP, AX
-	ANDQ $15, AX
-	ADDQ AX, BP
+	ADDQ $15, BP
+	ANDQ $-16, BP
     MOVQ 0(BP), AX
     MOVQ 8(BP), DX
 	MOVQ new+8(FP), BX
@@ -88,18 +83,16 @@ done:
 
 TEXT ·storeUint128amd64avx(SB),NOSPLIT,$0
 	MOVQ addr+0(FP), BP
-	MOVQ BP, AX
-	ANDQ $15, AX
-	ADDQ AX, BP
+	ADDQ $15, BP
+	ANDQ $-16, BP
 	MOVOU new+8(FP), X1
 	MOVOA X1, (BP)
 	RET	
 
 TEXT ·addUint128amd64(SB),NOSPLIT,$0
 	MOVQ addr+0(FP), BP
-	MOVQ BP, AX
-	ANDQ $15, AX
-	ADDQ AX, BP
+	ADDQ $15, BP
+	ANDQ $-16, BP
     MOVQ 0(BP), AX
     MOVQ 8(BP), DX
     MOVQ incr+8(FP), SI
@@ -121,9 +114,8 @@ done:
 
 TEXT ·andUint128amd64(SB),NOSPLIT,$0
 	MOVQ addr+0(FP), BP
-	MOVQ BP, AX
-	ANDQ $15, AX
-	ADDQ AX, BP
+	ADDQ $15, BP
+	ANDQ $-16, BP
     MOVQ 0(BP), AX
     MOVQ 8(BP), DX
     MOVQ incr+8(FP), SI
@@ -145,9 +137,8 @@ done:
 
 TEXT ·orUint128amd64(SB),NOSPLIT,$0
 	MOVQ addr+0(FP), BP
-	MOVQ BP, AX
-	ANDQ $15, AX
-	ADDQ AX, BP
+	ADDQ $15, BP
+	ANDQ $-16, BP
     MOVQ 0(BP), AX
     MOVQ 8(BP), DX
     MOVQ incr+8(FP), SI
@@ -169,9 +160,8 @@ done:
 
 TEXT ·xorUint128amd64(SB),NOSPLIT,$0
 	MOVQ addr+0(FP), BP
-	MOVQ BP, AX
-	ANDQ $15, AX
-	ADDQ AX, BP
+	ADDQ $15, BP
+	ANDQ $-16, BP
     MOVQ 0(BP), AX
     MOVQ 8(BP), DX
     MOVQ incr+8(FP), SI
