@@ -13,7 +13,7 @@ var (
 	xorUint128Impl            func(ptr *Uint128, op [2]uint64) [2]uint64
 )
 
-func initDispatch() {
+func initDispatch(useNativeAmd64, useAVXAmd64 bool) {
 	if useNativeAmd64 {
 		compareAndSwapUint128Impl = compareAndSwapUint128amd64
 		if useAVXAmd64 {

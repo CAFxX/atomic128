@@ -7,7 +7,7 @@ var (
 	storeUint128Impl func(ptr *Uint128, new [2]uint64)
 )
 
-func initDispatch() {
+func initDispatch(useNativeAmd64, useAVXAmd64 bool) {
 	if useAVXAmd64 {
 		loadUint128Impl = loadUint128amd64avx
 		storeUint128Impl = storeUint128amd64avx

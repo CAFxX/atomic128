@@ -4,11 +4,6 @@ package atomic128
 
 import "github.com/klauspost/cpuid/v2"
 
-var (
-	useNativeAmd64 bool
-	useAVXAmd64    bool
-)
-
 func compareAndSwapUint128amd64(*Uint128, [2]uint64, [2]uint64) bool
 func loadUint128amd64(*Uint128) [2]uint64
 func storeUint128amd64(*Uint128, [2]uint64)
@@ -22,8 +17,10 @@ func xorUint128amd64(ptr *Uint128, incr [2]uint64) [2]uint64
 func loadUint128amd64avx(*Uint128) [2]uint64
 func storeUint128amd64avx(*Uint128, [2]uint64)
 
+var hasNativeAmd64, hasAVXAmd64 bool
+
 func init() {
-	useNativeAmd64 = cpuid.CPU.Supports(cpuid.CX16)
-	useAVXAmd64 = cpuid.CPU.Supports(cpuid.AVX)
-	initDispatch()
+	hasNativeAmd64 = cpuid.CPU.Supports(cpuid.CX16)
+	hasAVXAmd64 = cpuid.CPU.Supports(cpuid.AVX)
+	initDispatch(hasNativeAmd64, hasAVXAmd64)
 }

@@ -277,15 +277,14 @@ func runBenchmarks(b *testing.B, fn func(*testing.PB)) {
 		b.RunParallel(fn)
 	})
 }
-
 func hasNative() bool {
-	return useNativeAmd64
+	return hasNativeAmd64
 }
 
 func fallback(tb testing.TB) {
-	amd64 := useNativeAmd64
-	useNativeAmd64 = false
+	native, avx := hasNativeAmd64, hasAVXAmd64
+	initDispatch(false, false)
 	tb.Cleanup(func() {
-		useNativeAmd64 = amd64
+		initDispatch(native, avx)
 	})
 }
