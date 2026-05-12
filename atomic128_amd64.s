@@ -5,16 +5,20 @@
 // Modified BSD License that can be found in
 // the LICENSE file.
 
+//go:build amd64 && !gccgo && !appengine
 // +build amd64,!gccgo,!appengine
 
 #include "textflag.h"
 
-TEXT ·swapUint128amd64(SB),NOSPLIT,$0
-	MOVQ addr+0(FP), BP
+TEXT ·swapUint128(SB),NOSPLIT,$0-40
+	MOVQ ptr+0(FP), BP
+	MOVQ BP, AX
+	ANDQ $15, AX
+	ADDQ AX, BP
     MOVQ 0(BP), AX
     MOVQ 8(BP), DX
-	MOVQ new+8(FP), BX
-	MOVQ new+16(FP), CX
+	MOVQ new_0+8(FP), BX
+	MOVQ new_1+16(FP), CX
 loop:
 	LOCK
 	CMPXCHG16B (BP)
@@ -26,20 +30,24 @@ done:
 	MOVQ DX, old+32(FP)
 	RET
 
-TEXT ·compareAndSwapUint128amd64(SB),NOSPLIT,$0
-	MOVQ addr+0(FP), BP
-	MOVQ old+8(FP), AX
-	MOVQ old+16(FP), DX
-	MOVQ new+24(FP), BX
-	MOVQ new+32(FP), CX
+TEXT ·compareAndSwapUint128(SB),NOSPLIT,$0-41
+	MOVQ ptr+0(FP), BP
+	MOVQ BP, AX
+	ANDQ $15, AX
+	ADDQ AX, BP
+	MOVQ new_0+8(FP), AX
+	MOVQ new_1+16(FP), DX
+	MOVQ new_0+24(FP), BX
+	MOVQ new_1+32(FP), CX
 	LOCK
 	CMPXCHG16B (BP)
 	SETEQ swapped+40(FP)
 	RET
 
-TEXT ·loadUint128amd64(SB),NOSPLIT,$0
-	MOVQ addr+0(FP), BP
-	XORQ AX, AX
+TEXT ·loadUint128(SB),NOSPLIT,$0-24
+	MOVQ ptr+0(FP), BP
+	MOVQ BP, AX
+	ANDQ $15, AX
 	XORQ DX, DX
 	XORQ BX, BX
 	XORQ CX, CX
@@ -49,17 +57,23 @@ TEXT ·loadUint128amd64(SB),NOSPLIT,$0
 	MOVQ DX, val+16(FP)
 	RET
 
-TEXT ·loadUint128amd64avx(SB),NOSPLIT,$0
-    MOVOA addr+0(FP), X1
+	ADDQ AX, BP
+    MOVOA (BP), X1
+TEXT ·loadUint128avx(SB),NOSPLIT,$0-24
+    MOVQ ptr+0(FP), BP
+	MOVQ BP, AX
+	ANDQ $15, AX
+	ADDQ AX, BP
+	MOVOA (BP), X1
 	MOVOU X1, val+8(FP)
 	RET
 
-TEXT ·storeUint128amd64(SB),NOSPLIT,$0
-	MOVQ addr+0(FP), BP
+TEXT ·storeUint128(SB),NOSPLIT,$0-24
+	MOVQ ptr+0(FP), BP
     MOVQ 0(BP), AX
     MOVQ 8(BP), DX
-	MOVQ new+8(FP), BX
-	MOVQ new+16(FP), CX
+	MOVQ new_0+8(FP), BX
+	MOVQ new_1+16(FP), CX
 loop:
 	LOCK
 	CMPXCHG16B (BP)
@@ -69,17 +83,27 @@ loop:
 done:
 	RET
 
-TEXT ·storeUint128amd64avx(SB),NOSPLIT,$0
-	MOVOU new+8(FP), X1
-	MOVOA X1, addr+0(FP)
+	MOVQ BP, AX
+	ANDQ $15, AX
+	ADDQ AX, BP
+TEXT ·storeUint128avx(SB),NOSPLIT,$0-24
+	MOVQ ptr+0(FP), BP
+	MOVQ BP, AX
+	ANDQ $15, AX
+	ADDQ AX, BP
+	MOVOU new_0+8(FP), X1
+	MOVOA X1, (BP)
 	RET	
 
-TEXT ·addUint128amd64(SB),NOSPLIT,$0
-	MOVQ addr+0(FP), BP
+TEXT ·addUint128(SB),NOSPLIT,$0-40
+	MOVQ ptr+0(FP), BP
+	MOVQ BP, AX
+	ANDQ $15, AX
+	ADDQ AX, BP
     MOVQ 0(BP), AX
     MOVQ 8(BP), DX
-    MOVQ incr+8(FP), SI
-    MOVQ incr+16(FP), DI
+    MOVQ incr_0+8(FP), SI
+    MOVQ incr_1+16(FP), DI
 loop:
     MOVQ AX, BX
     MOVQ DX, CX
@@ -91,16 +115,19 @@ loop:
     PAUSE
 	JMP loop
 done:
-    MOVQ BX, val+24(FP)
-    MOVQ CX, val+32(FP)
+    MOVQ BX, old+24(FP)
+    MOVQ CX, old+32(FP)
 	RET    
 
-TEXT ·andUint128amd64(SB),NOSPLIT,$0
-	MOVQ addr+0(FP), BP
+TEXT ·andUint128(SB),NOSPLIT,$0-40
+	MOVQ ptr+0(FP), BP
+	MOVQ BP, AX
+	ANDQ $15, AX
+	ADDQ AX, BP
     MOVQ 0(BP), AX
     MOVQ 8(BP), DX
-    MOVQ incr+8(FP), SI
-    MOVQ incr+16(FP), DI
+    MOVQ incr_0+8(FP), SI
+    MOVQ incr_1+16(FP), DI
 loop:
     MOVQ AX, BX
     MOVQ DX, CX
@@ -112,16 +139,19 @@ loop:
     PAUSE
 	JMP loop
 done:
-    MOVQ BX, val+24(FP)
-    MOVQ CX, val+32(FP)
+    MOVQ BX, old+24(FP)
+    MOVQ CX, old+32(FP)
 	RET    
 
-TEXT ·orUint128amd64(SB),NOSPLIT,$0
-	MOVQ addr+0(FP), BP
+TEXT ·orUint128(SB),NOSPLIT,$0-40
+	MOVQ ptr+0(FP), BP
+	MOVQ BP, AX
+	ANDQ $15, AX
+	ADDQ AX, BP
     MOVQ 0(BP), AX
     MOVQ 8(BP), DX
-    MOVQ incr+8(FP), SI
-    MOVQ incr+16(FP), DI
+    MOVQ incr_0+8(FP), SI
+    MOVQ incr_1+16(FP), DI
 loop:
     MOVQ AX, BX
     MOVQ DX, CX
@@ -133,16 +163,19 @@ loop:
     PAUSE
 	JMP loop
 done:
-    MOVQ BX, val+24(FP)
-    MOVQ CX, val+32(FP)
+    MOVQ BX, old+24(FP)
+    MOVQ CX, old+32(FP)
 	RET    
 
-TEXT ·xorUint128amd64(SB),NOSPLIT,$0
-	MOVQ addr+0(FP), BP
+TEXT ·xorUint128(SB),NOSPLIT,$0-40
+	MOVQ ptr+0(FP), BP
+	MOVQ BP, AX
+	ANDQ $15, AX
+	ADDQ AX, BP
     MOVQ 0(BP), AX
     MOVQ 8(BP), DX
-    MOVQ incr+8(FP), SI
-    MOVQ incr+16(FP), DI
+    MOVQ incr_0+8(FP), SI
+    MOVQ incr_1+16(FP), DI
 loop:
     MOVQ AX, BX
     MOVQ DX, CX
@@ -154,6 +187,6 @@ loop:
     PAUSE
 	JMP loop
 done:
-    MOVQ BX, val+24(FP)
-    MOVQ CX, val+32(FP)
+    MOVQ BX, old+24(FP)
+    MOVQ CX, old+32(FP)
 	RET    
