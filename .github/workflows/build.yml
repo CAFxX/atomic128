@@ -29,7 +29,10 @@ jobs:
 
     - name: Build (arm)
       run: GOARCH=arm go build -v ./...
-  
+
+    - name: Build (riscv64)
+      run: GOARCH=riscv64 go build -v ./...
+
     - name: Test
       run: go test -v -race -coverprofile=coverage.txt -covermode=atomic ./...
 
