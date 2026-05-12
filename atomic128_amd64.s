@@ -49,6 +49,11 @@ TEXT ·loadUint128amd64(SB),NOSPLIT,$0
 	MOVQ DX, val+16(FP)
 	RET
 
+TEXT ·loadUint128amd64avx(SB),NOSPLIT,$0
+    MOVOA addr+0(FP), X1
+	MOVOU X1, val+8(FP)
+	RET
+
 TEXT ·storeUint128amd64(SB),NOSPLIT,$0
 	MOVQ addr+0(FP), BP
     MOVQ 0(BP), AX
@@ -63,6 +68,11 @@ loop:
 	JMP loop
 done:
 	RET
+
+TEXT ·storeUint128amd64avx(SB),NOSPLIT,$0
+	MOVOU new+8(FP), X1
+	MOVOA X1, addr+0(FP)
+	RET	
 
 TEXT ·addUint128amd64(SB),NOSPLIT,$0
 	MOVQ addr+0(FP), BP
