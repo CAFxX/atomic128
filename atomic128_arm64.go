@@ -1,9 +1,7 @@
-//go:build amd64 && !gccgo && !appengine
-// +build amd64,!gccgo,!appengine
+//go:build arm64 && !gccgo && !appengine && !arm64_casp
+// +build arm64,!gccgo,!appengine,!arm64_casp
 
 package atomic128
-
-import "github.com/klauspost/cpuid/v2"
 
 func compareAndSwapUint128(*[2]uint64, [2]uint64, [2]uint64) bool
 func loadUint128(*[2]uint64) [2]uint64
@@ -15,5 +13,5 @@ func orUint128(ptr *[2]uint64, incr [2]uint64) [2]uint64
 func xorUint128(ptr *[2]uint64, incr [2]uint64) [2]uint64
 
 func init() {
-	useNative = cpuid.CPU.Supports(cpuid.CX16)
+	useNative = true
 }

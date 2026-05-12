@@ -9,7 +9,7 @@
 
 #include "textflag.h"
 
-TEXT ·swapUint128amd64(SB),NOSPLIT,$0
+TEXT ·swapUint128(SB),NOSPLIT,$0
 	MOVQ addr+0(FP), BP
     MOVQ 0(BP), AX
     MOVQ 8(BP), DX
@@ -26,7 +26,7 @@ done:
 	MOVQ DX, old+32(FP)
 	RET
 
-TEXT ·compareAndSwapUint128amd64(SB),NOSPLIT,$0
+TEXT ·compareAndSwapUint128(SB),NOSPLIT,$0
 	MOVQ addr+0(FP), BP
 	MOVQ old+8(FP), AX
 	MOVQ old+16(FP), DX
@@ -37,7 +37,7 @@ TEXT ·compareAndSwapUint128amd64(SB),NOSPLIT,$0
 	SETEQ swapped+40(FP)
 	RET
 
-TEXT ·loadUint128amd64(SB),NOSPLIT,$0
+TEXT ·loadUint128(SB),NOSPLIT,$0
 	MOVQ addr+0(FP), BP
 	XORQ AX, AX
 	XORQ DX, DX
@@ -49,12 +49,12 @@ TEXT ·loadUint128amd64(SB),NOSPLIT,$0
 	MOVQ DX, val+16(FP)
 	RET
 
-TEXT ·loadUint128amd64avx(SB),NOSPLIT,$0
+TEXT ·loadUint128avx(SB),NOSPLIT,$0
     MOVOA addr+0(FP), X1
 	MOVOU X1, val+8(FP)
 	RET
 
-TEXT ·storeUint128amd64(SB),NOSPLIT,$0
+TEXT ·storeUint128(SB),NOSPLIT,$0
 	MOVQ addr+0(FP), BP
     MOVQ 0(BP), AX
     MOVQ 8(BP), DX
@@ -69,12 +69,12 @@ loop:
 done:
 	RET
 
-TEXT ·storeUint128amd64avx(SB),NOSPLIT,$0
+TEXT ·storeUint128avx(SB),NOSPLIT,$0
 	MOVOU new+8(FP), X1
 	MOVOA X1, addr+0(FP)
 	RET	
 
-TEXT ·addUint128amd64(SB),NOSPLIT,$0
+TEXT ·addUint128(SB),NOSPLIT,$0
 	MOVQ addr+0(FP), BP
     MOVQ 0(BP), AX
     MOVQ 8(BP), DX
@@ -95,7 +95,7 @@ done:
     MOVQ CX, val+32(FP)
 	RET    
 
-TEXT ·andUint128amd64(SB),NOSPLIT,$0
+TEXT ·andUint128(SB),NOSPLIT,$0
 	MOVQ addr+0(FP), BP
     MOVQ 0(BP), AX
     MOVQ 8(BP), DX
@@ -116,7 +116,7 @@ done:
     MOVQ CX, val+32(FP)
 	RET    
 
-TEXT ·orUint128amd64(SB),NOSPLIT,$0
+TEXT ·orUint128(SB),NOSPLIT,$0
 	MOVQ addr+0(FP), BP
     MOVQ 0(BP), AX
     MOVQ 8(BP), DX
@@ -137,7 +137,7 @@ done:
     MOVQ CX, val+32(FP)
 	RET    
 
-TEXT ·xorUint128amd64(SB),NOSPLIT,$0
+TEXT ·xorUint128(SB),NOSPLIT,$0
 	MOVQ addr+0(FP), BP
     MOVQ 0(BP), AX
     MOVQ 8(BP), DX
