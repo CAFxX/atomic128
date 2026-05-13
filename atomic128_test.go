@@ -1,6 +1,7 @@
 package atomic128
 
 import (
+	"github.com/klauspost/cpuid/v2"
 	"math/rand"
 	"testing"
 )
@@ -279,13 +280,15 @@ func runBenchmarks(b *testing.B, fn func(*testing.PB)) {
 }
 
 func hasNative() bool {
-	return useNativeAmd64
+	// Not ideal, but required for fallback tests on generic builds
+	// where this func is mocked. On amd64, cpuid provides the truth.
+	return cpuid.CPU.Supports(cpuid.CX16)
 }
 
 func fallback(tb testing.TB) {
-	amd64 := useNativeAmd64
-	useNativeAmd64 = false
+	native, avx := cpuid.CPU.Supports(cpuid.CX16), cpuid.CPU.Supports(cpuid.AVX)
+	initDispatch(false, false)
 	tb.Cleanup(func() {
-		useNativeAmd64 = amd64
+		initDispatch(native, avx)
 	})
 }
