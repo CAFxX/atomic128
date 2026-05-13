@@ -1,4 +1,5 @@
 //go:build amd64 && !amd64.v2 && !amd64.v3 && !gccgo && !appengine
+// +build amd64,!amd64.v2,!amd64.v3,!gccgo,!appengine
 
 package atomic128
 
