@@ -11,16 +11,16 @@
 #include "textflag.h"
 
 TEXT ·swapUint128amd64(SB),NOSPLIT,$0
-	MOVQ addr+0(FP), BP
-	ADDQ $15, BP
-	ANDQ $-16, BP
-    MOVQ 0(BP), AX
-    MOVQ 8(BP), DX
+	MOVQ addr+0(FP), R8
+	ADDQ $15, R8
+	ANDQ $-16, R8
+    MOVQ 0(R8), AX
+    MOVQ 8(R8), DX
 	MOVQ new+8(FP), BX
 	MOVQ new+16(FP), CX
 loop:
 	LOCK
-	CMPXCHG16B (BP)
+	CMPXCHG16B (R8)
     JE done
     PAUSE
 	JMP loop
@@ -30,51 +30,51 @@ done:
 	RET
 
 TEXT ·compareAndSwapUint128amd64(SB),NOSPLIT,$0
-	MOVQ addr+0(FP), BP
-	ADDQ $15, BP
-	ANDQ $-16, BP
+	MOVQ addr+0(FP), R8
+	ADDQ $15, R8
+	ANDQ $-16, R8
 	MOVQ old+8(FP), AX
 	MOVQ old+16(FP), DX
 	MOVQ new+24(FP), BX
 	MOVQ new+32(FP), CX
 	LOCK
-	CMPXCHG16B (BP)
+	CMPXCHG16B (R8)
 	SETEQ swapped+40(FP)
 	RET
 
 TEXT ·loadUint128amd64(SB),NOSPLIT,$0
-	MOVQ addr+0(FP), BP
-	ADDQ $15, BP
-	ANDQ $-16, BP
+	MOVQ addr+0(FP), R8
+	ADDQ $15, R8
+	ANDQ $-16, R8
 	XORQ AX, AX
 	XORQ DX, DX
 	XORQ BX, BX
 	XORQ CX, CX
 	LOCK
-	CMPXCHG16B (BP)
+	CMPXCHG16B (R8)
 	MOVQ AX, val+8(FP)
 	MOVQ DX, val+16(FP)
 	RET
 
 TEXT ·loadUint128amd64avx(SB),NOSPLIT,$0
-	MOVQ addr+0(FP), BP
-	ADDQ $15, BP
-	ANDQ $-16, BP
-    MOVOA (BP), X1
+	MOVQ addr+0(FP), R8
+	ADDQ $15, R8
+	ANDQ $-16, R8
+    MOVOA (R8), X1
 	MOVOU X1, val+8(FP)
 	RET
 
 TEXT ·storeUint128amd64(SB),NOSPLIT,$0
-	MOVQ addr+0(FP), BP
-	ADDQ $15, BP
-	ANDQ $-16, BP
-    MOVQ 0(BP), AX
-    MOVQ 8(BP), DX
+	MOVQ addr+0(FP), R8
+	ADDQ $15, R8
+	ANDQ $-16, R8
+    MOVQ 0(R8), AX
+    MOVQ 8(R8), DX
 	MOVQ new+8(FP), BX
 	MOVQ new+16(FP), CX
 loop:
 	LOCK
-	CMPXCHG16B (BP)
+	CMPXCHG16B (R8)
     JE done
     PAUSE
 	JMP loop
@@ -82,19 +82,19 @@ done:
 	RET
 
 TEXT ·storeUint128amd64avx(SB),NOSPLIT,$0
-	MOVQ addr+0(FP), BP
-	ADDQ $15, BP
-	ANDQ $-16, BP
+	MOVQ addr+0(FP), R8
+	ADDQ $15, R8
+	ANDQ $-16, R8
 	MOVOU new+8(FP), X1
-	MOVOA X1, (BP)
+	MOVOA X1, (R8)
 	RET	
 
 TEXT ·addUint128amd64(SB),NOSPLIT,$0
-	MOVQ addr+0(FP), BP
-	ADDQ $15, BP
-	ANDQ $-16, BP
-    MOVQ 0(BP), AX
-    MOVQ 8(BP), DX
+	MOVQ addr+0(FP), R8
+	ADDQ $15, R8
+	ANDQ $-16, R8
+    MOVQ 0(R8), AX
+    MOVQ 8(R8), DX
     MOVQ incr+8(FP), SI
     MOVQ incr+16(FP), DI
 loop:
@@ -103,7 +103,7 @@ loop:
     ADDQ SI, BX
     ADCQ DI, CX
 	LOCK
-	CMPXCHG16B (BP)
+	CMPXCHG16B (R8)
     JE done
     PAUSE
 	JMP loop
@@ -113,11 +113,11 @@ done:
 	RET    
 
 TEXT ·andUint128amd64(SB),NOSPLIT,$0
-	MOVQ addr+0(FP), BP
-	ADDQ $15, BP
-	ANDQ $-16, BP
-    MOVQ 0(BP), AX
-    MOVQ 8(BP), DX
+	MOVQ addr+0(FP), R8
+	ADDQ $15, R8
+	ANDQ $-16, R8
+    MOVQ 0(R8), AX
+    MOVQ 8(R8), DX
     MOVQ incr+8(FP), SI
     MOVQ incr+16(FP), DI
 loop:
@@ -126,7 +126,7 @@ loop:
     ANDQ SI, BX
     ANDQ DI, CX
 	LOCK
-	CMPXCHG16B (BP)
+	CMPXCHG16B (R8)
     JE done
     PAUSE
 	JMP loop
@@ -136,11 +136,11 @@ done:
 	RET    
 
 TEXT ·orUint128amd64(SB),NOSPLIT,$0
-	MOVQ addr+0(FP), BP
-	ADDQ $15, BP
-	ANDQ $-16, BP
-    MOVQ 0(BP), AX
-    MOVQ 8(BP), DX
+	MOVQ addr+0(FP), R8
+	ADDQ $15, R8
+	ANDQ $-16, R8
+    MOVQ 0(R8), AX
+    MOVQ 8(R8), DX
     MOVQ incr+8(FP), SI
     MOVQ incr+16(FP), DI
 loop:
@@ -149,7 +149,7 @@ loop:
     ORQ SI, BX
     ORQ DI, CX
 	LOCK
-	CMPXCHG16B (BP)
+	CMPXCHG16B (R8)
     JE done
     PAUSE
 	JMP loop
@@ -159,11 +159,11 @@ done:
 	RET    
 
 TEXT ·xorUint128amd64(SB),NOSPLIT,$0
-	MOVQ addr+0(FP), BP
-	ADDQ $15, BP
-	ANDQ $-16, BP
-    MOVQ 0(BP), AX
-    MOVQ 8(BP), DX
+	MOVQ addr+0(FP), R8
+	ADDQ $15, R8
+	ANDQ $-16, R8
+    MOVQ 0(R8), AX
+    MOVQ 8(R8), DX
     MOVQ incr+8(FP), SI
     MOVQ incr+16(FP), DI
 loop:
@@ -172,7 +172,7 @@ loop:
     XORQ SI, BX
     XORQ DI, CX
 	LOCK
-	CMPXCHG16B (BP)
+	CMPXCHG16B (R8)
     JE done
     PAUSE
 	JMP loop
