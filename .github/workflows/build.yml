@@ -10,9 +10,6 @@ jobs:
 
   benchmark:
     runs-on: ubuntu-latest
-    permissions:
-      pull-requests: write
-      contents: read
     steps:
     - uses: actions/checkout@v4
 
@@ -28,6 +25,24 @@ jobs:
         go install golang.org/x/perf/cmd/benchstat@latest
         $(go env GOPATH)/bin/benchstat bench.txt > benchstat.txt
         cat benchstat.txt >> $GITHUB_STEP_SUMMARY
+
+    - name: Upload benchmark results
+      uses: actions/upload-artifact@v4
+      with:
+        name: benchstat
+        path: benchstat.txt
+
+  benchmark_comment:
+    needs: benchmark
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+      contents: read
+    steps:
+    - name: Download benchmark results
+      uses: actions/download-artifact@v4
+      with:
+        name: benchstat
 
     - name: Comment PR
       uses: actions/github-script@v7
