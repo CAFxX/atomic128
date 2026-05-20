@@ -29,42 +29,32 @@ jobs:
         $(go env GOPATH)/bin/benchstat bench.txt > benchstat.txt
         cat benchstat.txt >> $GITHUB_STEP_SUMMARY
 
+    - name: Save PR number
+      if: github.event_name == 'pull_request'
+      run: echo ${{ github.event.pull_request.number }} > pr-number.txt
+
     - name: Upload benchmark results
       uses: actions/upload-artifact@v4
       with:
         name: benchstat
-        path: benchstat.txt
+        path: |
+          benchstat.txt
+          pr-number.txt
 
   benchmark_comment:
     needs: benchmark
+    if: github.event_name == 'push'
     runs-on: ubuntu-latest
     permissions:
-      pull-requests: write
-      contents: read
+      contents: write
     steps:
     - name: Download benchmark results
       uses: actions/download-artifact@v4
       with:
         name: benchstat
 
-    - name: Comment PR
-      uses: actions/github-script@v7
-      if: github.event_name == 'pull_request'
-      with:
-        github-token: ${{ secrets.GITHUB_TOKEN }}
-        script: |
-          const fs = require('fs');
-          const output = fs.readFileSync('benchstat.txt', 'utf8');
-          github.rest.issues.createComment({
-            issue_number: context.issue.number,
-            owner: context.repo.owner,
-            repo: context.repo.repo,
-            body: '## Benchmark Results\n```text\n' + output + '\n```'
-          })
-
     - name: Comment Commit
       uses: actions/github-script@v7
-      if: github.event_name == 'push'
       with:
         github-token: ${{ secrets.GITHUB_TOKEN }}
         script: |
