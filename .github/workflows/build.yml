@@ -9,7 +9,10 @@ on:
 jobs:
 
   build:
-    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        os: [ubuntu-latest, ubuntu-24.04-arm]
+    runs-on: ${{ matrix.os }}
     steps:
     - uses: actions/checkout@v4
 
@@ -19,17 +22,20 @@ jobs:
         go-version: '1.18'
 
     - name: Build (amd64)
+      if: matrix.os == 'ubuntu-latest'
       run: GOARCH=amd64 go build -v ./...
 
     - name: Build (386)
+      if: matrix.os == 'ubuntu-latest'
       run: GOARCH=386 go build -v ./...
 
     - name: Build (arm64)
+      if: matrix.os == 'ubuntu-latest'
       run: GOARCH=arm64 go build -v ./...
 
     - name: Build (arm)
+      if: matrix.os == 'ubuntu-latest'
       run: GOARCH=arm go build -v ./...
-  
+
     - name: Test
       run: go test -v -race -coverprofile=coverage.txt -covermode=atomic ./...
-

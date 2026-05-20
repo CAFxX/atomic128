@@ -5,8 +5,10 @@
 [![codecov](https://codecov.io/gh/CAFxX/atomic128/branch/master/graph/badge.svg?token=03A5UVYW3K)](https://codecov.io/gh/CAFxX/atomic128)
 [![Go Report Card](https://goreportcard.com/badge/github.com/CAFxX/atomic128)](https://goreportcard.com/report/github.com/CAFxX/atomic128)
 
-128-bit atomic operations for Golang, using [CMPXCHG16B](http://www.felixcloutier.com/x86/CMPXCHG8B:CMPXCHG16B.html)
-when available. 
+128-bit atomic operations for Golang, using native hardware instructions when available:
+- **amd64**: Uses [CMPXCHG16B](http://www.felixcloutier.com/x86/CMPXCHG8B:CMPXCHG16B.html) and AVX instructions.
+- **arm64**: Uses `LDAXP`/`STLXP` and dynamically dispatches to `CASPD` (ARMv8.1-A LSE) if supported by the CPU.
+- Other architectures fall back to a mutex-based approach.
 
 Partially based on [github.com/tmthrgd/atomic128](https://github.com/tmthrgd/atomic128), without the problematic parts.
 
@@ -42,5 +44,4 @@ CAS/fallback    25.3ns ± 2%
 
 ## TODO
 
-- Add ARM/aarch64 assembly version
 - Add shift/rotate operations
