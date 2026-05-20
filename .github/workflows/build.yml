@@ -8,6 +8,72 @@ on:
 
 jobs:
 
+  benchmark:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Go
+      uses: actions/setup-go@v5
+      with:
+        go-version: '1.21'
+
+    - name: Run benchmarks
+      run: |
+        go test -bench=. -cpu=8 -benchtime=0.1s -count=6 > bench.txt
+        go test -bench=. -cpu=1 -benchtime=0.1s -count=6 >> bench.txt
+        go install golang.org/x/perf/cmd/benchstat@latest
+        $(go env GOPATH)/bin/benchstat bench.txt > benchstat.txt
+        cat benchstat.txt >> $GITHUB_STEP_SUMMARY
+
+    - name: Upload benchmark results
+      uses: actions/upload-artifact@v4
+      with:
+        name: benchstat
+        path: benchstat.txt
+
+  benchmark_comment:
+    needs: benchmark
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+      contents: read
+    steps:
+    - name: Download benchmark results
+      uses: actions/download-artifact@v4
+      with:
+        name: benchstat
+
+    - name: Comment PR
+      uses: actions/github-script@v7
+      if: github.event_name == 'pull_request'
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        script: |
+          const fs = require('fs');
+          const output = fs.readFileSync('benchstat.txt', 'utf8');
+          github.rest.issues.createComment({
+            issue_number: context.issue.number,
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            body: '## Benchmark Results\n```text\n' + output + '\n```'
+          })
+
+    - name: Comment Commit
+      uses: actions/github-script@v7
+      if: github.event_name == 'push'
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        script: |
+          const fs = require('fs');
+          const output = fs.readFileSync('benchstat.txt', 'utf8');
+          github.rest.repos.createCommitComment({
+            commit_sha: context.sha,
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            body: '## Benchmark Results\n```text\n' + output + '\n```'
+          })
+
   build:
     runs-on: ubuntu-latest
     steps:
