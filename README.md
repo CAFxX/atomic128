@@ -7,7 +7,7 @@
 
 128-bit atomic operations for Golang, using native hardware instructions when available:
 - **amd64**: Uses [CMPXCHG16B](http://www.felixcloutier.com/x86/CMPXCHG8B:CMPXCHG16B.html) and AVX instructions.
-- **arm64**: Uses `LDAXP`/`STLXP` and dynamically dispatches to `CASPD` (ARMv8.1-A LSE) if supported by the CPU.
+- **arm64**: Uses `LDAXP`/`STLXP` and dynamically dispatches to `CASPD` (ARMv8.1-A LSE) (if supported).
 - Other architectures fall back to a mutex-based approach.
 
 Partially based on [github.com/tmthrgd/atomic128](https://github.com/tmthrgd/atomic128), without the problematic parts.
