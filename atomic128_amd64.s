@@ -20,7 +20,7 @@ TEXT ·swapUint128amd64(SB),NOSPLIT,$0
 	MOVQ new+16(FP), CX
 
 	LOCK
-	CMPXCHG16B (BP)
+	CMPXCHG16B (R8)
     JE done
 loop:
 	LOCK
@@ -78,7 +78,7 @@ TEXT ·storeUint128amd64(SB),NOSPLIT,$0
 	MOVQ new+16(FP), CX
 
 	LOCK
-	CMPXCHG16B (BP)
+	CMPXCHG16B (R8)
     JE done
 loop:
 	LOCK
@@ -111,7 +111,7 @@ TEXT ·addUint128amd64(SB),NOSPLIT,$0
     ADDQ SI, BX
     ADCQ DI, CX
 	LOCK
-	CMPXCHG16B (BP)
+	CMPXCHG16B (R8)
     JE done
 loop:
     MOVQ AX, BX
@@ -142,7 +142,7 @@ TEXT ·andUint128amd64(SB),NOSPLIT,$0
     ANDQ SI, BX
     ANDQ DI, CX
 	LOCK
-	CMPXCHG16B (BP)
+	CMPXCHG16B (R8)
     JE done
 loop:
     MOVQ AX, BX
@@ -173,7 +173,7 @@ TEXT ·orUint128amd64(SB),NOSPLIT,$0
     ORQ SI, BX
     ORQ DI, CX
 	LOCK
-	CMPXCHG16B (BP)
+	CMPXCHG16B (R8)
     JE done
 loop:
     MOVQ AX, BX
@@ -204,7 +204,7 @@ TEXT ·xorUint128amd64(SB),NOSPLIT,$0
     XORQ SI, BX
     XORQ DI, CX
 	LOCK
-	CMPXCHG16B (BP)
+	CMPXCHG16B (R8)
     JE done
 loop:
     MOVQ AX, BX
