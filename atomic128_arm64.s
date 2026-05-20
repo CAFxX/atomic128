@@ -6,12 +6,8 @@ TEXT ·loadUint128arm64(SB),NOSPLIT,$0
 	ADD $15, R0
 	AND $~15, R0
 
-loop:
 	LDAXP (R0), (R2, R3)
-	// STLXP is used here just to clear the exclusive monitor and prove we could have written.
-	// We write back the same value we loaded, which guarantees an atomic read of the 128-bit value.
-	STLXP (R2, R3), (R0), R4
-	CBNZ R4, loop
+	CLREX
 
 	MOVD R2, val+8(FP)
 	MOVD R3, val+16(FP)
@@ -72,8 +68,6 @@ loop:
 	MOVB R8, swapped+40(FP)
 	RET
 fail:
-	// Need to clear exclusive monitor, a dummy store or clrex is often used, but not strictly required
-	// if we just bail. However, it's good practice. Go's arm64 assembler supports CLREX.
 	CLREX
 	MOVD $0, R8
 	MOVB R8, swapped+40(FP)
@@ -89,13 +83,8 @@ TEXT ·compareAndSwapUint128arm64caspd(SB),NOSPLIT,$0
 	MOVD new+24(FP), R4
 	MOVD new+32(FP), R5
 
-	// CASPD compares (R2, R3) against memory at (R0).
-	// If equal, it stores (R4, R5) to memory.
-	// The original memory value is loaded into (R2, R3).
 	CASPD (R2, R3), (R0), (R4, R5)
 
-	// Now check if the original memory value (now in R2, R3)
-	// equals the old value we passed in.
 	MOVD old+8(FP), R6
 	MOVD old+16(FP), R7
 
@@ -123,7 +112,6 @@ TEXT ·addUint128arm64(SB),NOSPLIT,$0
 loop:
 	LDAXP (R0), (R4, R5)
 
-	// Perform addition
 	MOVD R4, R6
 	MOVD R5, R7
 	ADDS R2, R6
@@ -147,7 +135,6 @@ TEXT ·andUint128arm64(SB),NOSPLIT,$0
 loop:
 	LDAXP (R0), (R4, R5)
 
-	// Perform AND
 	MOVD R4, R6
 	MOVD R5, R7
 	AND R2, R6
@@ -171,7 +158,6 @@ TEXT ·orUint128arm64(SB),NOSPLIT,$0
 loop:
 	LDAXP (R0), (R4, R5)
 
-	// Perform OR
 	MOVD R4, R6
 	MOVD R5, R7
 	ORR R2, R6
@@ -195,7 +181,6 @@ TEXT ·xorUint128arm64(SB),NOSPLIT,$0
 loop:
 	LDAXP (R0), (R4, R5)
 
-	// Perform XOR
 	MOVD R4, R6
 	MOVD R5, R7
 	EOR R2, R6
