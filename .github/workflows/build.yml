@@ -23,8 +23,8 @@ jobs:
 
     - name: Run benchmarks
       run: |
-        go test -bench=. -cpu=8 -benchtime=0.1s -count=5 > bench.txt
-        go test -bench=. -cpu=1 -benchtime=0.1s -count=5 >> bench.txt
+        go test -bench=. -cpu=8 -benchtime=0.1s -count=6 > bench.txt
+        go test -bench=. -cpu=1 -benchtime=0.1s -count=6 >> bench.txt
         go install golang.org/x/perf/cmd/benchstat@latest
         $(go env GOPATH)/bin/benchstat bench.txt > benchstat.txt
         cat benchstat.txt >> $GITHUB_STEP_SUMMARY
