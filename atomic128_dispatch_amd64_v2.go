@@ -17,34 +17,34 @@ func initDispatch(useNativeAmd64, useAVXAmd64 bool) {
 	}
 }
 
-func CompareAndSwapUint128(ptr *Uint128, old, new [2]uint64) bool {
+func (ptr *Uint128) CompareAndSwap(old, new [2]uint64) bool {
 	return compareAndSwapUint128amd64(ptr, old, new)
 }
 
-func LoadUint128(ptr *Uint128) [2]uint64 {
+func (ptr *Uint128) Load() [2]uint64 {
 	return loadUint128Impl(ptr)
 }
 
-func StoreUint128(ptr *Uint128, new [2]uint64) {
+func (ptr *Uint128) Store(new [2]uint64) {
 	storeUint128Impl(ptr, new)
 }
 
-func SwapUint128(ptr *Uint128, new [2]uint64) [2]uint64 {
+func (ptr *Uint128) Swap(new [2]uint64) [2]uint64 {
 	return swapUint128amd64(ptr, new)
 }
 
-func AddUint128(ptr *Uint128, incr [2]uint64) [2]uint64 {
+func (ptr *Uint128) Add(incr [2]uint64) [2]uint64 {
 	return addUint128amd64(ptr, incr)
 }
 
-func AndUint128(ptr *Uint128, op [2]uint64) [2]uint64 {
+func (ptr *Uint128) And(op [2]uint64) [2]uint64 {
 	return andUint128amd64(ptr, op)
 }
 
-func OrUint128(ptr *Uint128, op [2]uint64) [2]uint64 {
+func (ptr *Uint128) Or(op [2]uint64) [2]uint64 {
 	return orUint128amd64(ptr, op)
 }
 
-func XorUint128(ptr *Uint128, op [2]uint64) [2]uint64 {
+func (ptr *Uint128) Xor(op [2]uint64) [2]uint64 {
 	return xorUint128amd64(ptr, op)
 }
