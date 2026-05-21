@@ -258,37 +258,97 @@ func BenchmarkCAS(b *testing.B) {
 }
 
 func runTests(t *testing.T, fn func(*testing.T)) {
-	if hasNative() {
-		t.Run("native", fn)
+	native, avx, rtm := cpuid.CPU.Supports(cpuid.CX16), cpuid.CPU.Supports(cpuid.AVX), cpuid.CPU.Supports(cpuid.RTM)
+
+	// Test all 2^3 combinations of capabilities.
+	// If a capability is true but the CPU doesn't support it, we must skip.
+	for _, useNative := range []bool{false, true} {
+		for _, useAvx := range []bool{false, true} {
+			for _, useRtm := range []bool{false, true} {
+				name := "fallback"
+				if useNative {
+					name = "cx16"
+					if useAvx {
+						name += "-avx"
+					}
+					if useRtm {
+						name += "-rtm"
+					}
+				} else {
+					if useAvx || useRtm {
+						continue // If not using native, AVX and RTM settings are ignored anyway, so skip duplicates
+					}
+				}
+
+				t.Run(name, func(t *testing.T) {
+					if useNative && !native {
+						t.Skip("skipping cx16 tests: CPU does not support CX16")
+					}
+					if useAvx && !avx {
+						t.Skip("skipping AVX tests: CPU does not support AVX")
+					}
+					if useRtm && !rtm {
+						t.Skip("skipping RTM tests: CPU does not support RTM")
+					}
+
+					initDispatch(useNative, useAvx, useRtm)
+					t.Cleanup(func() {
+						initDispatch(native, avx, rtm)
+					})
+
+					fn(t)
+				})
+			}
+		}
 	}
-	t.Run("fallback", func(t *testing.T) {
-		fallback(t)
-		fn(t)
-	})
 }
 
 func runBenchmarks(b *testing.B, fn func(*testing.PB)) {
-	if hasNative() {
-		b.Run("native", func(b *testing.B) {
-			b.RunParallel(fn)
-		})
+	native, avx, rtm := cpuid.CPU.Supports(cpuid.CX16), cpuid.CPU.Supports(cpuid.AVX), cpuid.CPU.Supports(cpuid.RTM)
+
+	for _, useNative := range []bool{false, true} {
+		for _, useAvx := range []bool{false, true} {
+			for _, useRtm := range []bool{false, true} {
+				name := "fallback"
+				if useNative {
+					name = "cx16"
+					if useAvx {
+						name += "-avx"
+					}
+					if useRtm {
+						name += "-rtm"
+					}
+				} else {
+					if useAvx || useRtm {
+						continue
+					}
+				}
+
+				b.Run(name, func(b *testing.B) {
+					if useNative && !native {
+						b.Skip("skipping cx16 benchmarks: CPU does not support CX16")
+					}
+					if useAvx && !avx {
+						b.Skip("skipping AVX benchmarks: CPU does not support AVX")
+					}
+					if useRtm && !rtm {
+						b.Skip("skipping RTM benchmarks: CPU does not support RTM")
+					}
+
+					initDispatch(useNative, useAvx, useRtm)
+					b.Cleanup(func() {
+						initDispatch(native, avx, rtm)
+					})
+
+					b.RunParallel(fn)
+				})
+			}
+		}
 	}
-	b.Run("fallback", func(b *testing.B) {
-		fallback(b)
-		b.RunParallel(fn)
-	})
 }
 
 func hasNative() bool {
 	// Not ideal, but required for fallback tests on generic builds
 	// where this func is mocked. On amd64, cpuid provides the truth.
 	return cpuid.CPU.Supports(cpuid.CX16)
-}
-
-func fallback(tb testing.TB) {
-	native, avx := cpuid.CPU.Supports(cpuid.CX16), cpuid.CPU.Supports(cpuid.AVX)
-	initDispatch(false, false)
-	tb.Cleanup(func() {
-		initDispatch(native, avx)
-	})
 }

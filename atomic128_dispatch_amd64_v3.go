@@ -2,7 +2,7 @@
 
 package atomic128
 
-func initDispatch(useNativeAmd64, useAVXAmd64 bool) {
+func initDispatch(useNativeAmd64, useAVXAmd64, useRTMAmd64 bool) {
 }
 
 func (ptr *Uint128) CompareAndSwap(old, new [2]uint64) bool {

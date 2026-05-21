@@ -2,7 +2,7 @@
 
 package atomic128
 
-func initDispatch(bool, bool) {}
+func initDispatch(bool, bool, bool) {}
 
 // CompareAndSwap performs a 128-bit atomic CAS on ptr.
 func (ptr *Uint128) CompareAndSwap(old, new [2]uint64) bool {

@@ -18,5 +18,5 @@ func loadUint128amd64avx(*Uint128) [2]uint64
 func storeUint128amd64avx(*Uint128, [2]uint64)
 
 func init() {
-	initDispatch(cpuid.CPU.Supports(cpuid.CX16), cpuid.CPU.Supports(cpuid.AVX))
+	initDispatch(cpuid.CPU.Supports(cpuid.CX16), cpuid.CPU.Supports(cpuid.AVX), cpuid.CPU.Supports(cpuid.RTM))
 }
