@@ -16,18 +16,32 @@ var (
 func initDispatch(useNativeAmd64, useAVXAmd64, useRTMAmd64 bool) {
 	if useNativeAmd64 {
 		compareAndSwapUint128Impl = compareAndSwapUint128amd64
-		if useAVXAmd64 {
-			loadUint128Impl = loadUint128amd64avx
-			storeUint128Impl = storeUint128amd64avx
+		if useRTMAmd64 {
+			if useAVXAmd64 {
+				loadUint128Impl = loadUint128amd64avx
+			} else {
+				loadUint128Impl = loadUint128amd64
+			}
+			storeUint128Impl = storeUint128amd64rtm
+			swapUint128Impl = swapUint128amd64rtm
+			addUint128Impl = addUint128amd64rtm
+			andUint128Impl = andUint128amd64rtm
+			orUint128Impl = orUint128amd64rtm
+			xorUint128Impl = xorUint128amd64rtm
 		} else {
-			loadUint128Impl = loadUint128amd64
-			storeUint128Impl = storeUint128amd64
+			if useAVXAmd64 {
+				loadUint128Impl = loadUint128amd64avx
+				storeUint128Impl = storeUint128amd64avx
+			} else {
+				loadUint128Impl = loadUint128amd64
+				storeUint128Impl = storeUint128amd64
+			}
+			swapUint128Impl = swapUint128amd64
+			addUint128Impl = addUint128amd64
+			andUint128Impl = andUint128amd64
+			orUint128Impl = orUint128amd64
+			xorUint128Impl = xorUint128amd64
 		}
-		swapUint128Impl = swapUint128amd64
-		addUint128Impl = addUint128amd64
-		andUint128Impl = andUint128amd64
-		orUint128Impl = orUint128amd64
-		xorUint128Impl = xorUint128amd64
 	} else {
 		compareAndSwapUint128Impl = compareAndSwapUint128Fallback
 		loadUint128Impl = loadUint128Fallback

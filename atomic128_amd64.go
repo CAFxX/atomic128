@@ -17,6 +17,14 @@ func xorUint128amd64(ptr *Uint128, incr [2]uint64) [2]uint64
 func loadUint128amd64avx(*Uint128) [2]uint64
 func storeUint128amd64avx(*Uint128, [2]uint64)
 
+// RTM variants
+func storeUint128amd64rtm(*Uint128, [2]uint64)
+func swapUint128amd64rtm(*Uint128, [2]uint64) [2]uint64
+func addUint128amd64rtm(ptr *Uint128, incr [2]uint64) [2]uint64
+func andUint128amd64rtm(ptr *Uint128, incr [2]uint64) [2]uint64
+func orUint128amd64rtm(ptr *Uint128, incr [2]uint64) [2]uint64
+func xorUint128amd64rtm(ptr *Uint128, incr [2]uint64) [2]uint64
+
 func init() {
 	initDispatch(cpuid.CPU.Supports(cpuid.CX16), cpuid.CPU.Supports(cpuid.AVX), cpuid.CPU.Supports(cpuid.RTM))
 }
